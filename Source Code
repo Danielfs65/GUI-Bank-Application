@@ -1,0 +1,81 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class BankBalanceApp {
+    private double balance = 0.0;
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(BankBalanceApp::new);
+    }
+
+    public BankBalanceApp() {
+        // Create the main frame
+        JFrame frame = new JFrame("Bank Balance Application");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 200);
+        frame.setLayout(new BorderLayout());
+
+        // Create the panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        // Create and add components to the panel
+        JLabel balanceLabel = new JLabel("Current Balance: $" + balance);
+        JLabel amountLabel = new JLabel("Amount: ");
+        JTextField amountField = new JTextField(10);
+        JButton depositButton = new JButton("Deposit");
+        JButton withdrawButton = new JButton("Withdraw");
+
+        // Add action listeners to the buttons
+        depositButton.addActionListener(e -> {
+            double amount = getAmountFromField(amountField);
+            if (amount >= 0) {
+                balance += amount;
+                balanceLabel.setText("Current Balance: $" + balance);
+            } else {
+                showError("Please enter a valid amount.");
+            }
+        });
+
+        withdrawButton.addActionListener(e -> {
+            double amount = getAmountFromField(amountField);
+            if (amount >= 0) {
+                if (balance >= amount) {
+                    balance -= amount;
+                    balanceLabel.setText("Current Balance: $" + balance);
+                } else {
+                    showError("Insufficient funds.");
+                }
+            } else {
+                showError("Please enter a valid amount.");
+            }
+        });
+
+        // Add components to the panel
+        panel.add(balanceLabel);
+        panel.add(amountLabel);
+        panel.add(amountField);
+        panel.add(depositButton);
+        panel.add(withdrawButton);
+
+        // Add the panel to the frame
+        frame.add(panel, BorderLayout.CENTER);
+
+        // Make the frame visible
+        frame.setVisible(true);
+    }
+
+    private double getAmountFromField(JTextField amountField) {
+        try {
+            return Double.parseDouble(amountField.getText());
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
